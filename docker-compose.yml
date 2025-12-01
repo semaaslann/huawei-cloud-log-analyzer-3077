@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - log_analysis_network
+  
+  spark-history-server:
+    image: bitnami/spark-history-server:latest
+    ports:
+      - "18080:18080"
+    environment:
+      - SPARK_HISTORY_FS_LOGDIR=file:///tmp/spark-events
+      - SPARK_HISTORY_FS_CLEANER_ENABLED=true
+    volumes:
+      - spark_history_data:/tmp/spark-events
+    networks:
+      - log_analysis_network
+
+volumes:
+  grafana_data:
+  spark_history_data:
+
+networks:
+  log_analysis_network:
